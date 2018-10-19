@@ -1,0 +1,54 @@
+﻿@model ninja.model.Entity.Invoice
+@using ninja.model.Entity;
+
+@{
+    ViewBag.Title = "Detail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Detail</h2>
+
+<div>
+    <h4>Invoice</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Type)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Type)
+        </dd>
+
+    </dl>
+    <div id="detail-group" class="form-horizontal">
+        <h4>Details</h4>
+        @foreach (InvoiceDetail item in @Model.GetDetail())
+            {
+            <table class="table" id=@item.Id>
+                <tr>
+                <td class="control-label col-md-2">Description</td>
+                <td class="col-md-10">
+                    <strong>@item.Description</strong>
+                </td>
+                </tr>
+                <tr>
+                    <td class="control-label col-md-2">Amount</td>
+                    <td class="col-md-10">
+                        @item.Amount
+                    </td>
+                </tr>
+                <tr>
+                    <td class="control-label col-md-2">Price</td>
+                    <td class="col-md-10">
+                        @item.UnitPrice
+                    </td>
+                </tr>
+            </table>
+        }
+    </div>
+
+</div>
+<p>
+    @Html.ActionLink("Back to List", "Index")
+</p>

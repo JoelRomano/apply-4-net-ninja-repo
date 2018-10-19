@@ -1,0 +1,106 @@
+﻿@model ninja.model.Entity.Invoice
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Edit</h2>
+<div>
+    @using (Html.BeginForm())
+        {
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Invoice</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Id)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Type, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Type, new { htmlAttributes = new { @class = "form-control", @disabled = "disabled" } })
+                @Html.ValidationMessageFor(model => model.Type, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div id="detail-group" class="form-horizontal">
+            <h4>Details</h4>
+            @for (int i = 0; i < Model.GetDetail().Count; i++)
+            {
+                @Html.HiddenFor(m => m.GetDetail()[i].Id)
+                <table class="table" id=@i>
+                    <tr>
+                        <td class="control-label col-md-2">@Html.LabelFor(m => m.GetDetail()[i].Description)</td>
+                        <td class="col-md-10">
+                            <strong>@Html.TextBoxFor( m => m.GetDetail()[i].Description, new { htmlAttributes = new { @class = "description" } })</strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="control-label col-md-2">@Html.LabelFor(m => m.GetDetail()[i].Amount)</td>
+                        <td class="col-md-10">
+                            @Html.TextBoxFor( m => m.GetDetail()[i].Amount, new { htmlAttributes = new { @class = "amount" } })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="control-label col-md-2">@Html.LabelFor(m => m.GetDetail()[i].UnitPrice)</td>
+                        <td class="col-md-10">
+                            @Html.TextBoxFor( m => m.GetDetail()[i].UnitPrice, new { htmlAttributes = new { @class = "price" } })
+                        </td>
+                    </tr>
+
+                </table>
+            }
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Edit" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+    }
+</div>
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+<script language="javascript" type="text/javascript">
+    function Save() {
+
+        var item = {
+            Id: @Model.Id,
+            Type: @Model.Type,
+            Detail: []
+        }
+
+            var tables = $(".table");
+            var qty = tables.Count();
+            var i = 0;
+            for(var table in tables){
+                var detail = {
+                    Description: table.children("#description").valueOf(),
+                    Amount: table.children("#amount").valueOf(),
+                    UnitPrice: table.children("#price").valueOf()
+                }
+                item.Detail.push(detail);
+                i++;
+            }
+
+            var message = JSON.stringify(item);
+
+            $.ajax({
+                type: 'POST',
+                url: "/{controller}/{action}",
+                data: message,
+                dataType: "JSON",
+            });
+            return true;
+        }
+</script>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+}
